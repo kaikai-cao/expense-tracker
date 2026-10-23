@@ -32,11 +32,13 @@ jobs:
       - name: Sync web assets into native project
         run: npx cap sync android
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Show preinstalled Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          sdkmanager --version
 
       - name: Accept SDK licenses
-        run: yes | sdkmanager --licenses || true
+        run: yes | sdkmanager --licenses > /dev/null || true
 
       - name: Install SDK platform & build-tools
         run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
@@ -47,6 +49,6 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: overspend-app-debug.apk
+          name: overspend-app-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
