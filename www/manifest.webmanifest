@@ -1,0 +1,19 @@
+{
+  "name": "今天又花超了吗",
+  "short_name": "花超了吗",
+  "description": "专治学生党月光的小账本，随手记收支、分类统计、月度趋势与预算管理。",
+  "lang": "zh-CN",
+  "id": "/",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f6fa",
+  "theme_color": "#5b6cff",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "appId": "com.overspend.app",
+  "appName": "今天又花超了吗",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

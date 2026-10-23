@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#5b6cff" />
+  <title>今天又花超了吗</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="assets/icon-144.png" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <main>
+      <!-- 首页 -->
+      <section id="tab-home" class="tab">
+        <div class="hero">
+          <div class="hero-month" id="home-month">—</div>
+          <div class="hero-balance">
+            <div class="hero-label">本月结余</div>
+            <div class="hero-amount" id="home-balance">¥0.00</div>
+          </div>
+          <div class="hero-row">
+            <div class="hero-col"><div class="hero-col-label">支出</div><div class="hero-col-val expense" id="home-expense">¥0.00</div></div>
+            <div class="hero-col"><div class="hero-col-label">收入</div><div class="hero-col-val income" id="home-income">¥0.00</div></div>
+          </div>
+        </div>
+
+        <div class="section-title">快速记账</div>
+        <div class="quick-grid" id="quick-grid"></div>
+
+        <div class="section-title">今日账单 <span class="sub" id="home-today"></span></div>
+        <div id="home-today-list"></div>
+      </section>
+
+      <!-- 账单 -->
+      <section id="tab-bill" class="tab" hidden>
+        <div class="bar">
+          <div class="bar-nav" data-delta="-1">‹</div>
+          <div class="bar-title" id="bill-month">—</div>
+          <div class="bar-nav" data-delta="1">›</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-col"><div class="sum-label">支出</div><div class="sum-val expense" id="bill-expense">¥0.00</div></div>
+          <div class="sum-col"><div class="sum-label">收入</div><div class="sum-val income" id="bill-income">¥0.00</div></div>
+        </div>
+        <div id="bill-groups"></div>
+      </section>
+
+      <!-- 统计 -->
+      <section id="tab-stats" class="tab" hidden>
+        <div class="bar">
+          <div class="bar-nav" data-delta="-1">‹</div>
+          <div class="bar-title" id="stats-month">—</div>
+          <div class="bar-nav" data-delta="1">›</div>
+        </div>
+        <div class="pie-wrap"><canvas id="pieCanvas"></canvas></div>
+        <div class="budget">
+          <div class="budget-head"><span>每月预算</span><span id="budget-text">未设置 · 已用 0%</span></div>
+          <div class="budget-bar-wrap"><div class="budget-bar" id="budget-bar" style="width:0%"></div></div>
+          <div class="budget-tip" id="budget-tip">总支出 ¥0.00，去“我的”设置预算</div>
+        </div>
+        <div class="section-title">分类排行</div>
+        <div class="ranking" id="stats-ranking"></div>
+        <div class="section-title">每日趋势</div>
+        <div class="trend"><div class="bars" id="stats-bars"></div></div>
+      </section>
+
+      <!-- 我的 -->
+      <section id="tab-me" class="tab" hidden>
+        <div class="profile">
+          <img class="avatar" src="assets/mascot.png" alt="钱包" />
+          <div class="profile-info">
+            <div class="profile-name">今天又花超了吗</div>
+            <div class="profile-sub" id="me-count">共 0 条记录</div>
+          </div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-col"><div class="sum-label">本月支出</div><div class="sum-val expense" id="me-expense">¥0.00</div></div>
+          <div class="sum-col"><div class="sum-label">本月收入</div><div class="sum-val income" id="me-income">¥0.00</div></div>
+          <div class="sum-col"><div class="sum-label">结余</div><div class="sum-val" id="me-balance">¥0.00</div></div>
+        </div>
+        <div class="menu">
+          <div class="menu-item" id="btn-budget"><span class="menu-icon">🎯</span><span class="menu-label">每月预算</span><span class="menu-arrow" id="me-budget">去设置 ›</span></div>
+          <div class="menu-item" id="btn-export"><span class="menu-icon">📤</span><span class="menu-label">导出数据</span><span class="menu-arrow">›</span></div>
+          <div class="menu-item" id="btn-clear"><span class="menu-icon">🗑️</span><span class="menu-label">清空数据</span><span class="menu-arrow">›</span></div>
+        </div>
+        <div class="sync-box" id="sync-box">
+          <div class="sync-head"><span>☁️ 云端同步</span><span class="sync-state" id="sync-state">—</span></div>
+          <div class="sync-code-row">
+            <span class="sync-code-label">同步码</span>
+            <span class="sync-code" id="sync-code">--------</span>
+            <span class="sync-copy" id="btn-copy-code">复制</span>
+          </div>
+          <div class="sync-actions">
+            <div class="menu-item" id="btn-sync"><span class="menu-icon">🔄</span><span class="menu-label">立即同步</span><span class="menu-arrow">›</span></div>
+            <div class="menu-item" id="btn-link"><span class="menu-icon">🔗</span><span class="menu-label">关联其他设备</span><span class="menu-arrow">›</span></div>
+            <div class="menu-item" id="btn-upload"><span class="menu-icon">⬆️</span><span class="menu-label">上传本机数据</span><span class="menu-arrow">›</span></div>
+          </div>
+          <div class="sync-tip">手机和电脑使用相同「同步码」即可自动同步账单。在手机上点“关联其他设备”输入此码，再点“上传本机数据”。</div>
+        </div>
+        <div class="foot">数据默认存本机；开启云端同步后多设备实时共享（需在已发布的应用域名下使用）。可“添加到主屏幕”当 App 用。</div>
+      </section>
+    </main>
+
+    <!-- 底部 Tab -->
+    <nav class="tabbar" id="tabbar">
+      <div class="tab-item active" data-tab="home"><div class="tab-icon">🏠</div><div class="tab-text">首页</div></div>
+      <div class="tab-item" data-tab="bill"><div class="tab-icon">📒</div><div class="tab-text">账单</div></div>
+      <div class="tab-item" data-tab="stats"><div class="tab-icon">📊</div><div class="tab-text">统计</div></div>
+      <div class="tab-item" data-tab="me"><div class="tab-icon">👤</div><div class="tab-text">我的</div></div>
+    </nav>
+
+    <!-- 记一笔 底部弹层 -->
+    <div class="sheet-mask" id="sheet-mask" hidden></div>
+    <div class="sheet" id="add-sheet" hidden>
+      <div class="sheet-handle"></div>
+      <div class="type-switch">
+        <div class="type-btn active exp" data-type="expense">支出</div>
+        <div class="type-btn" data-type="income">收入</div>
+      </div>
+      <div class="amount-card">
+        <div class="amount-label" id="amount-label">支出金额</div>
+        <div class="amount-input-wrap"><span class="rmb">¥</span><input id="amount-input" class="amount-input" type="number" inputmode="decimal" placeholder="0.00" /></div>
+      </div>
+      <div class="cat-grid" id="cat-grid"></div>
+      <div class="field"><div class="field-label">日期</div>
+        <input id="date-input" class="field-value" type="date" />
+      </div>
+      <div class="field"><div class="field-label">备注</div>
+        <input id="note-input" class="field-input" type="text" placeholder="加点备注吧（选填）" />
+      </div>
+      <button class="save-btn" id="save-btn">保存</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

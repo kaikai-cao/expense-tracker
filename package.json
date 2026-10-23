@@ -1,0 +1,15 @@
+{
+  "name": "overspend-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "今天又花超了吗 - 学生记账本 (Capacitor Android)",
+  "scripts": {
+    "sync": "cap sync android",
+    "android": "cap add android --confirm && cap sync android"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^6.2.0",
+    "@capacitor/core": "^6.2.0"
+  }
+}
