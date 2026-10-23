@@ -8,8 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      ANDROID_HOME: ${{ github.workspace }}/android-sdk
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,31 +32,39 @@ jobs:
       - name: Sync web assets into native project
         run: npx cap sync android
 
-      - name: Install Android SDK (manual, with retry)
+      - name: Setup Android SDK (android-actions)
+        id: setupsdk
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          build-tools: 34.0.0
+        continue-on-error: true
+
+      - name: Fallback - manual Android SDK install
+        if: steps.setupsdk.outcome == 'failure'
+        env:
+          ANDROID_HOME: ${{ github.workspace }}/android-sdk
         run: |
-          SDK=$ANDROID_HOME
+          set -x
+          SDK="$ANDROID_HOME"
           mkdir -p "$SDK/cmdline-tools"
-          echo "== 下载 commandlinetools (重试 4 次) =="
-          for i in 1 2 3 4; do
+          for i in 1 2 3 4 5; do
             if curl -L --retry 5 --retry-delay 5 -o /tmp/cmdtools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip; then
-              echo "下载成功"; break
+              echo "download ok"; break
             fi
-            echo "第 $i 次下载失败，5 秒后重试"; sleep 5
+            echo "attempt $i failed, retry"; sleep 8
           done
-          echo "== 解压 =="
+          ls -l /tmp/cmdtools.zip
           unzip -q /tmp/cmdtools.zip -d "$SDK/cmdline-tools"
           mv "$SDK/cmdline-tools/cmdline-tools" "$SDK/cmdline-tools/latest"
           echo "$SDK/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
-          echo "ANDROID_HOME=$SDK"
-          "$SDK/cmdline-tools/latest/bin/sdkmanager --version"
-          echo "== 接受 licenses =="
           yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
-          echo "== 安装 platform & build-tools =="
           "$SDK/cmdline-tools/latest/bin/sdkmanager" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
 
       - name: Build debug APK
         run: |
-          echo "sdk.dir=$ANDROID_HOME" > android/local.properties
+          echo "sdk.dir=${ANDROID_HOME:-$HOME/Android/Sdk}" > android/local.properties
           cd android && chmod +x ./gradlew && ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK artifact
